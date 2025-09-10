@@ -5,7 +5,7 @@ export default function Header() {
     <header className="relative z-20 flex items-center justify-between p-6">
       {/* Logo */}
       <div className="flex items-center">
-        <span className="text-white font-bold text-xl">Thred</span>
+        <span className="text-white font-bold text-xl">AGIVC</span>
       </div>
 
       {/* Navigation */}
