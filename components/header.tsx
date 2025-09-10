@@ -5,7 +5,7 @@ export default function Header() {
     <header className="relative z-20 flex items-center justify-between p-6">
       {/* Logo */}
       <div className="flex items-center">
-        <span className="text-white font-bold text-xl">Thred</span>
+        <span className="text-white font-bold text-xl">AGIVC</span>
       </div>
 
       {/* Navigation */}
@@ -14,13 +14,13 @@ export default function Header() {
           href="#"
           className="text-white/80 hover:text-white text-xs font-light px-3 py-2 rounded-full hover:bg-white/10 transition-all duration-200"
         >
-          Free AI Audit
+          Calendar
         </a>
         <a
           href="#"
           className="text-white/80 hover:text-white text-xs font-light px-3 py-2 rounded-full hover:bg-white/10 transition-all duration-200"
         >
-          Case Study
+          Community
         </a>
         <a
           href="#"
