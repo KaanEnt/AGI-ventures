@@ -1,0 +1,36 @@
+{
+  "scraped_at": "2025-09-17T18:06:33.343Z",
+  "calendar_slug": "agivc",
+  "events_count": 4,
+  "events": [
+    {
+      "id": "evt-72l37PTUrAj6Dbm",
+      "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
+      "start_at": "2025-09-17T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/hm5n0smp"
+    },
+    {
+      "id": "evt-oKu8DHTrGfN9dtF",
+      "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
+      "start_at": "2025-09-24T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/ybrizc65"
+    },
+    {
+      "id": "evt-IkNgH0JGqhVlS30",
+      "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
+      "start_at": "2025-10-01T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/l86ri1gy"
+    },
+    {
+      "id": "evt-PoAa4VsJqnPGuVh",
+      "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
+      "start_at": "2025-10-08T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/s44lgi3o"
+    }
+  ]
+}
+

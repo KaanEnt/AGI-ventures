@@ -1,0 +1,5 @@
+.specstory
+.cursorindexingignore
+node_modules
+.next
+.vscode

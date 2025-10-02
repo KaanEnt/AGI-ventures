@@ -1,10 +1,3 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
 export function formatEventDate(dateString: string): string {
   const date = new Date(dateString);
   const month = date.toLocaleDateString('en-US', { month: 'long' });
@@ -12,4 +5,8 @@ export function formatEventDate(dateString: string): string {
   const weekday = date.toLocaleDateString('en-US', { weekday: 'long' });
   
   return `${month} - ${day} - ${weekday}`;
+}
+
+export function cn(...classes: string[]): string {
+  return classes.filter(Boolean).join(' ');
 }

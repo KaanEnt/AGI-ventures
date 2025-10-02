@@ -1,17 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.lumacdn.com',
+        hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
       },
@@ -21,8 +14,15 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.lumacdn.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
+    qualities: [75, 90, 95, 100],
   },
 }
 
-export default nextConfig
+module.exports = nextConfig
