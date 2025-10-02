@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 
 export default function Header() {
   return (
-    <header className="relative z-20 flex items-center justify-between p-6">
+    <header className="relative z-20 flex items-center justify-between px-8 py-6">
       <div className="flex items-center">
         <span className="text-white font-bold text-xl">AGIVC</span>
       </div>
