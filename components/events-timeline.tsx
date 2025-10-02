@@ -83,7 +83,7 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
     <div className="flex justify-between w-full">
       {/* Left side - Date selector */}
       <div className="flex-shrink-0">
-        <div className="mb-8">
+        <div className="mb-6">
           <h2 className="text-2xl md:text-3xl font-light text-white mb-4">Upcoming Events</h2>
           <div className="flex gap-2">
             <button className="px-3 py-1.5 bg-white text-black rounded-full text-xs font-medium">
@@ -107,7 +107,7 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
 
           {/* Top arrow indicator */}
           {canScrollUp && (
-            <div className="absolute -top-12 left-1/2 -translate-x-1/2 flex justify-center z-10">
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex justify-center z-10">
               <motion.div
                 animate={{ opacity: [0.4, 1, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -162,7 +162,7 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
 
           {/* Bottom arrow indicator */}
           {canScrollDown && (
-            <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex justify-center z-10">
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex justify-center z-10">
               <motion.div
                 animate={{ opacity: [0.4, 1, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -221,7 +221,7 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
                     src={selectedDate.event.cover_url}
                     alt={selectedDate.event.name}
                     fill
-                    className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover object-center"
                     sizes="500px"
                     quality={90}
                   />

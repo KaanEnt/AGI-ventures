@@ -14,8 +14,8 @@ export default function ShaderShowcase() {
       <div className="min-h-screen flex flex-col">
         <Header />
         
-        <div className="flex-1 flex flex-col justify-between">
-          <div className="relative z-20 px-8 pt-8 pb-20">
+        <div className="flex-1 flex flex-col justify-between pb-8">
+          <div className="relative z-20 px-8 pt-4">
             <EventsTimeline events={events} discordUrl="https://discord.gg/your-server" />
           </div>
           
