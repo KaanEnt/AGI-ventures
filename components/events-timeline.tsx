@@ -11,27 +11,36 @@ interface DateItem {
   isMock: boolean;
 }
 
-export default function EventsTimeline({ events, discordUrl = "https://discord.gg/your-server" }: EventsTimelineProps) {
+export default function EventsTimeline({ events, pastEvents = [], discordUrl = "https://discord.gg/your-server" }: EventsTimelineProps) {
+  const [viewMode, setViewMode] = useState<'upcoming' | 'past'>('upcoming');
   const now = new Date();
+  
   const futureEvents = events
     .filter(event => new Date(event.start_at) > now)
     .sort((a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime());
 
+  const sortedPastEvents = pastEvents
+    .sort((a, b) => new Date(b.start_at).getTime() - new Date(a.start_at).getTime());
+
   const createMockDates = (): DateItem[] => {
-    const dateItems: DateItem[] = futureEvents.map(event => ({
+    const sourceEvents = viewMode === 'upcoming' ? futureEvents : sortedPastEvents;
+    const dateItems: DateItem[] = sourceEvents.map(event => ({
       date: new Date(event.start_at),
       event,
       isMock: false
     }));
 
-    while (dateItems.length < 7) {
-      const lastDate = dateItems.length > 0 ? dateItems[dateItems.length - 1].date : now;
-      const nextDate = new Date(lastDate);
-      nextDate.setDate(nextDate.getDate() + 7);
-      dateItems.push({
-        date: nextDate,
-        isMock: true
-      });
+    // Only add mock dates for upcoming events
+    if (viewMode === 'upcoming') {
+      while (dateItems.length < 7) {
+        const lastDate = dateItems.length > 0 ? dateItems[dateItems.length - 1].date : now;
+        const nextDate = new Date(lastDate);
+        nextDate.setDate(nextDate.getDate() + 7);
+        dateItems.push({
+          date: nextDate,
+          isMock: true
+        });
+      }
     }
 
     return dateItems;
@@ -44,6 +53,11 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const selectedDate = allDates[selectedIndex];
+
+  // Reset selected index when switching views
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [viewMode]);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -83,13 +97,29 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
     <div className="flex justify-between w-full">
       {/* Left side - Date selector */}
       <div className="flex-shrink-0">
-        <div className="mb-6">
-          <h2 className="text-2xl md:text-3xl font-light text-white mb-4">Upcoming Events</h2>
+        <div className="mb-12">
+          <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+            {viewMode === 'upcoming' ? 'Upcoming Events' : 'Past Events'}
+          </h2>
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 bg-white text-black rounded-full text-xs font-medium">
+            <button 
+              onClick={() => setViewMode('upcoming')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                viewMode === 'upcoming' 
+                  ? 'bg-white text-black' 
+                  : 'bg-white/10 backdrop-blur-sm text-white/60 hover:bg-white/20'
+              }`}
+            >
               Upcoming
             </button>
-            <button className="px-3 py-1.5 bg-white/10 backdrop-blur-sm text-white/60 rounded-full text-xs font-medium hover:bg-white/20">
+            <button 
+              onClick={() => setViewMode('past')}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+                viewMode === 'past' 
+                  ? 'bg-white text-black' 
+                  : 'bg-white/10 backdrop-blur-sm text-white/60 hover:bg-white/20'
+              }`}
+            >
               Past
             </button>
           </div>
@@ -97,7 +127,7 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
 
         <div 
           ref={scrollContainerRef}
-          className="relative group"
+          className="relative group mb-12"
         >
           {/* Hover glow effect */}
           <div className="absolute -left-4 -right-4 top-1/2 -translate-y-1/2 h-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
@@ -107,7 +137,7 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
 
           {/* Top arrow indicator */}
           {canScrollUp && (
-            <div className="absolute -top-6 left-1/2 -translate-x-1/2 flex justify-center z-10">
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex justify-center z-10">
               <motion.div
                 animate={{ opacity: [0.4, 1, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -162,7 +192,7 @@ export default function EventsTimeline({ events, discordUrl = "https://discord.g
 
           {/* Bottom arrow indicator */}
           {canScrollDown && (
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex justify-center z-10">
+            <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex justify-center z-10">
               <motion.div
                 animate={{ opacity: [0.4, 1, 0.4] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}

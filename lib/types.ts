@@ -8,6 +8,7 @@ export interface Event {
 
 export interface EventsTimelineProps {
   events: Event[];
+  pastEvents?: Event[];
   discordUrl?: string;
 }
 
