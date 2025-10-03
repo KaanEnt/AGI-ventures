@@ -15,12 +15,28 @@ interface Event {
   url?: string;
 }
 
-async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'past' = 'upcoming', debugMode = false): Promise<Event[]> {
-  const urlPath = eventType === 'past' ? `${calendarSlug}/past` : calendarSlug;
-  console.log(`[INFO] Scraping https://lu.ma/${urlPath}...`);
+async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'past' = 'upcoming', debugMode = false, maxEvents = 20): Promise<Event[]> {
+  const allEvents: Event[] = [];
+  let pagination_cursor: string | null = null;
+  let attemptCount = 0;
+  const maxAttempts = 3; // Limit to 3 pages to avoid infinite loops
+  
+  while (allEvents.length < maxEvents && attemptCount < maxAttempts) {
+    attemptCount++;
+    
+    // Build URL with pagination
+    let url = eventType === 'past' 
+      ? `https://lu.ma/${calendarSlug}?k=c&period=past` 
+      : `https://lu.ma/${calendarSlug}`;
+    
+    if (pagination_cursor) {
+      url += `&pagination_cursor=${pagination_cursor}`;
+    }
+    
+    console.log(`[INFO] Scraping ${url}... (attempt ${attemptCount})`);
   
   try {
-    const response = await fetch(`https://lu.ma/${urlPath}`, {
+    const response = await fetch(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -47,39 +63,35 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
     }
     
     const $ = cheerio.load(html);
-    const events: Event[] = [];
+    const pageEvents: Event[] = [];
+    let nextCursor: string | null = null;
 
     // Debug: Log all script tags
-    console.log(`[INFO] Found ${$('script').length} script tags`);
+    if (attemptCount === 1) {
+      console.log(`[INFO] Found ${$('script').length} script tags`);
+    }
     
     // Look for Next.js data
     $('script[id="__NEXT_DATA__"]').each((_, element) => {
       try {
-        console.log('[INFO] Found __NEXT_DATA__ script tag');
+        if (attemptCount === 1) {
+          console.log('[INFO] Found __NEXT_DATA__ script tag');
+        }
         const jsonData = JSON.parse($(element).html() || '{}');
-        console.log('[INFO] Parsed Next.js data structure:', Object.keys(jsonData));
         
         // Navigate through Next.js data structure
         const pageProps = jsonData?.props?.pageProps;
         if (pageProps) {
-          console.log('[INFO] PageProps keys:', Object.keys(pageProps));
-          
-          // Debug: Save the full data structure
-          if (debugMode) {
+          if (attemptCount === 1 && debugMode) {
+            console.log('[INFO] PageProps keys:', Object.keys(pageProps));
             const dataPath = join(process.cwd(), `debug-pageprops-${eventType}.json`);
             writeFileSync(dataPath, JSON.stringify(pageProps, null, 2));
             console.log(`[DEBUG] Saved PageProps to ${dataPath}`);
           }
           
-          // Explore initialData structure
-          if (pageProps.initialData) {
-            console.log('[INFO] InitialData keys:', Object.keys(pageProps.initialData));
-            
-            if (debugMode) {
-              const initialDataPath = join(process.cwd(), `debug-initialdata-${eventType}.json`);
-              writeFileSync(initialDataPath, JSON.stringify(pageProps.initialData, null, 2));
-              console.log(`[DEBUG] Saved InitialData to ${initialDataPath}`);
-            }
+          // Check for pagination cursor
+          if (pageProps.initialData?.data?.pagination_cursor) {
+            nextCursor = pageProps.initialData.data.pagination_cursor;
           }
           
           // Look for events in various locations
@@ -89,27 +101,19 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
             pageProps.initialData?.events,
             pageProps.initialData?.calendar?.events,
             pageProps.initialData?.data?.events,
-            pageProps.initialData?.data?.featured_items, // Found it! Events are here
+            pageProps.initialData?.data?.featured_items,
             pageProps.data?.events,
             pageProps.serverData?.events,
           ];
 
           for (const eventSource of possibleEventSources) {
             if (eventSource && Array.isArray(eventSource)) {
-              console.log(`[SUCCESS] Found ${eventSource.length} events in data source`);
-              eventSource.forEach((item: any, index: number) => {
-                // Handle featured_items structure (has nested event object)
+              console.log(`[SUCCESS] Found ${eventSource.length} events in page ${attemptCount}`);
+              eventSource.forEach((item: any) => {
                 const event = item.event || item;
                 
-                console.log(`Event ${index + 1}:`, {
-                  id: event.api_id || event.id,
-                  name: event.name,
-                  start_at: event.start_at || event.startDate || item.start_at,
-                  cover_url: event.cover_url || event.social_image_url || event.image
-                });
-                
                 if (event && (event.api_id || event.id) && event.name) {
-                  events.push({
+                  pageEvents.push({
                     id: event.api_id || event.id,
                     name: event.name,
                     start_at: event.start_at || event.startDate || item.start_at || new Date().toISOString(),
@@ -118,7 +122,7 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
                   });
                 }
               });
-              break; // Use first valid source
+              break;
             }
           }
         }
@@ -127,49 +131,31 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
       }
     });
 
-    // Fallback: Look for other JSON script tags
-    if (events.length === 0) {
-      console.log('[INFO] Trying other JSON script tags...');
-      $('script[type="application/json"]').each((_, element) => {
-        try {
-          const jsonData = JSON.parse($(element).html() || '{}');
-          console.log('[INFO] Found JSON script with keys:', Object.keys(jsonData));
-        } catch (e) {
-          // Skip invalid JSON
-        }
-      });
+    // Add page events to collection
+    allEvents.push(...pageEvents);
+    console.log(`[INFO] Total events collected so far: ${allEvents.length}`);
+    
+    // Check if we should continue paginating
+    if (!nextCursor || pageEvents.length === 0) {
+      console.log('[INFO] No more pages to fetch');
+      break;
     }
-
-    // Fallback: Look for structured data
-    if (events.length === 0) {
-      console.log('[INFO] Trying structured data...');
-      $('script[type="application/ld+json"]').each((_, element) => {
-        try {
-          const structuredData = JSON.parse($(element).html() || '{}');
-          console.log('[INFO] Found structured data:', structuredData['@type']);
-          
-          if (structuredData['@type'] === 'Event') {
-            events.push({
-              id: structuredData.identifier || Date.now().toString(),
-              name: structuredData.name || 'Unnamed Event',
-              start_at: structuredData.startDate || new Date().toISOString(),
-              cover_url: structuredData.image || '/placeholder.jpg',
-              url: structuredData.url || `https://lu.ma/${calendarSlug}`,
-            });
-          }
-        } catch (e) {
-          // Skip invalid JSON
-        }
-      });
+    
+    pagination_cursor = nextCursor;
+    
+    // Add a small delay to avoid rate limiting
+    if (attemptCount < maxAttempts && allEvents.length < maxEvents) {
+      await new Promise(resolve => setTimeout(resolve, 500));
     }
-
-    console.log(`[SUCCESS] Successfully scraped ${events.length} ${eventType} events`);
-    return events;
 
   } catch (error) {
-    console.error('[ERROR] Scraping failed:', error);
-    return [];
+    console.error('[ERROR] Scraping failed on attempt', attemptCount, ':', error);
+    break;
   }
+  }
+
+  console.log(`[SUCCESS] Successfully scraped ${allEvents.length} ${eventType} events total`);
+  return allEvents.slice(0, maxEvents); // Limit to requested max
 }
 
 async function main() {
@@ -185,10 +171,10 @@ async function main() {
   
   // Scrape both upcoming and past events
   console.log('\n[INFO] Scraping upcoming events...');
-  const scrapedUpcoming = await scrapeLumaEvents(calendarSlug, 'upcoming', debugMode);
+  const scrapedUpcoming = await scrapeLumaEvents(calendarSlug, 'upcoming', debugMode, 50);
   
-  console.log('\n[INFO] Scraping past events...');
-  const scrapedPast = await scrapeLumaEvents(calendarSlug, 'past', debugMode);
+  console.log('\n[INFO] Scraping past events (up to 20)...');
+  const scrapedPast = await scrapeLumaEvents(calendarSlug, 'past', debugMode, 20);
   
   // Filter out events that aren't actually in the past/future
   const upcomingEvents = scrapedUpcoming.filter(event => {

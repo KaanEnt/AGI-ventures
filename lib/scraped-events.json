@@ -1,8 +1,8 @@
 {
-  "scraped_at": "2025-10-03T00:15:41.011Z",
+  "scraped_at": "2025-10-03T01:04:28.322Z",
   "calendar_slug": "agivc",
   "upcoming_count": 1,
-  "past_count": 1,
+  "past_count": 19,
   "upcoming_events": [
     {
       "id": "evt-PoAa4VsJqnPGuVh",
@@ -14,11 +14,137 @@
   ],
   "past_events": [
     {
-      "id": "evt-PoAa4VsJqnPGuVh",
+      "id": "hm5n0smp",
       "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
-      "start_at": "2025-10-08T21:00:00.000Z",
-      "cover_url": "https://images.lumacdn.com/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
-      "url": "https://lu.ma/s44lgi3o"
+      "start_at": "2025-10-01T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/hm5n0smp"
+    },
+    {
+      "id": "qkku9i2e",
+      "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
+      "start_at": "2025-09-24T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/qkku9i2e"
+    },
+    {
+      "id": "9k96tg5z",
+      "name": "Hackathon 3.0 (Theme: Build to Convert)",
+      "start_at": "2025-09-18T16:30:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/0a/f57fca7c-16c5-47e6-9432-204b48a77cb8.png",
+      "url": "https://lu.ma/9k96tg5z"
+    },
+    {
+      "id": "jw6xrr82",
+      "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
+      "start_at": "2025-09-17T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/jw6xrr82"
+    },
+    {
+      "id": "ib4q8ydj",
+      "name": "AI Beach BBQ Social",
+      "start_at": "2025-09-10T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/v5/46978068-eaac-4a1a-aadb-2242ea68de55.png",
+      "url": "https://lu.ma/ib4q8ydj"
+    },
+    {
+      "id": "wgmyokcg",
+      "name": "Weekly Co-Hacking (Bring your laptop and hangout)",
+      "start_at": "2025-09-07T15:30:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/wgmyokcg"
+    },
+    {
+      "id": "bz156w2n",
+      "name": "Founder Pitch Practice",
+      "start_at": "2025-09-06T13:30:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/xt/be3fc0de-a259-4b01-b159-029a4131e850.jpg",
+      "url": "https://lu.ma/bz156w2n"
+    },
+    {
+      "id": "hfjgx3py",
+      "name": "AIT Ottawa Co-hacking",
+      "start_at": "2025-09-03T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/gallery-images/2j/cda5c088-e214-475e-b73f-26e1ff4b0091.png",
+      "url": "https://lu.ma/hfjgx3py"
+    },
+    {
+      "id": "0wofjghj",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-08-31T19:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/0wofjghj"
+    },
+    {
+      "id": "l5sus4f0",
+      "name": "Founder Pitch Practice",
+      "start_at": "2025-08-27T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/xt/be3fc0de-a259-4b01-b159-029a4131e850.jpg",
+      "url": "https://lu.ma/l5sus4f0"
+    },
+    {
+      "id": "o6ckc0gy",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-08-20T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/o6ckc0gy"
+    },
+    {
+      "id": "s85969p7",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-08-13T21:30:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/s85969p7"
+    },
+    {
+      "id": "xb5lmhvl",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-08-13T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/xb5lmhvl"
+    },
+    {
+      "id": "yet47t4v",
+      "name": "\"Eh I\" Summer Vibe Hackathon (Ottawa - July)",
+      "start_at": "2025-08-06T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/r9/87511c6c-a555-43d4-8295-60363f1e3da6.png",
+      "url": "https://lu.ma/yet47t4v"
+    },
+    {
+      "id": "06v9cgpz",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-07-30T21:30:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/06v9cgpz"
+    },
+    {
+      "id": "nhhn56lr",
+      "name": "AI Tinkerers Ottawa (June 2025) - Sponsored by Factory",
+      "start_at": "2025-07-30T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/sp/877c5403-072d-42e3-9402-78dee2efe192.png",
+      "url": "https://lu.ma/nhhn56lr"
+    },
+    {
+      "id": "uwnxkdxe",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-07-23T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/uwnxkdxe"
+    },
+    {
+      "id": "oewppphb",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-07-16T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/m0/20ea2360-9834-4e18-82b6-c8d609675980",
+      "url": "https://lu.ma/oewppphb"
+    },
+    {
+      "id": "smin1v5p",
+      "name": "Weekly Co-Hacking: Inference (Bring your laptop and hangout)",
+      "start_at": "2025-07-09T21:00:00.000Z",
+      "cover_url": "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,anim=false,background=white,quality=75,width=180,height=180/event-covers/jb/8288a6af-dad9-44eb-946a-cc93db2af4a5.png",
+      "url": "https://lu.ma/smin1v5p"
     }
   ],
   "events_count": 1,
