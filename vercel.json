@@ -1,0 +1,9 @@
+{
+  "crons": [
+    {
+      "path": "/api/scrape-events",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}
+
