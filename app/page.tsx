@@ -16,8 +16,8 @@ export default function ShaderShowcase() {
       <div className="min-h-screen flex flex-col">
         <Header />
         
-        <div className="flex-1 flex flex-col justify-between pb-8">
-          <div className="relative z-20 px-8 pt-4">
+        <div className="flex-1 flex flex-col pb-8">
+          <div className="relative z-20 px-8 pt-4 flex-1 flex flex-col">
             <EventsTimeline 
               events={upcomingEvents} 
               pastEvents={pastEvents}
