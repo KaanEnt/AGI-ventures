@@ -36,7 +36,9 @@ Run the auto-scraper (checks if data is older than 23 hours before scraping):
 npm run scrape:auto
 ```
 
-You can set this up as a cron job to run daily:
+**Note:** The scraper does NOT run automatically. You need to set it up as a cron job or scheduled task to run daily.
+
+Example cron job setup:
 
 ```bash
 # Add to crontab (runs daily at 3 AM)
@@ -46,7 +48,7 @@ You can set this up as a cron job to run daily:
 ## Files
 
 - `scrape-luma.ts` - Main scraper that fetches upcoming and past events from Luma
-- `auto-scraper.ts` - Automated scraper that only runs if data is stale
+- `auto-scraper.ts` - Automated scraper that only runs if data is stale (23+ hours old)
 
 ## Output
 
@@ -66,4 +68,3 @@ The scraped data is saved to `lib/scraped-events.json` with the following struct
 ```
 
 The `events` and `events_count` fields are maintained for backwards compatibility.
-

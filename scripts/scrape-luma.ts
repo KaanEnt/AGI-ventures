@@ -17,7 +17,7 @@ interface Event {
 
 async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'past' = 'upcoming', debugMode = false): Promise<Event[]> {
   const urlPath = eventType === 'past' ? `${calendarSlug}/past` : calendarSlug;
-  console.log(`🔍 Scraping https://lu.ma/${urlPath}...`);
+  console.log(`[INFO] Scraping https://lu.ma/${urlPath}...`);
   
   try {
     const response = await fetch(`https://lu.ma/${urlPath}`, {
@@ -37,48 +37,48 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
     }
 
     const html = await response.text();
-    console.log(`📄 Received ${html.length} characters of HTML`);
+    console.log(`[INFO] Received ${html.length} characters of HTML`);
     
     // Save HTML for debugging if requested
     if (debugMode) {
       const htmlPath = join(process.cwd(), `debug-luma-${eventType}.html`);
       writeFileSync(htmlPath, html);
-      console.log(`🐛 Saved HTML to ${htmlPath}`);
+      console.log(`[DEBUG] Saved HTML to ${htmlPath}`);
     }
     
     const $ = cheerio.load(html);
     const events: Event[] = [];
 
     // Debug: Log all script tags
-    console.log(`🔍 Found ${$('script').length} script tags`);
+    console.log(`[INFO] Found ${$('script').length} script tags`);
     
     // Look for Next.js data
     $('script[id="__NEXT_DATA__"]').each((_, element) => {
       try {
-        console.log('🎯 Found __NEXT_DATA__ script tag');
+        console.log('[INFO] Found __NEXT_DATA__ script tag');
         const jsonData = JSON.parse($(element).html() || '{}');
-        console.log('📊 Parsed Next.js data structure:', Object.keys(jsonData));
+        console.log('[INFO] Parsed Next.js data structure:', Object.keys(jsonData));
         
         // Navigate through Next.js data structure
         const pageProps = jsonData?.props?.pageProps;
         if (pageProps) {
-          console.log('📋 PageProps keys:', Object.keys(pageProps));
+          console.log('[INFO] PageProps keys:', Object.keys(pageProps));
           
           // Debug: Save the full data structure
           if (debugMode) {
             const dataPath = join(process.cwd(), `debug-pageprops-${eventType}.json`);
             writeFileSync(dataPath, JSON.stringify(pageProps, null, 2));
-            console.log(`🐛 Saved PageProps to ${dataPath}`);
+            console.log(`[DEBUG] Saved PageProps to ${dataPath}`);
           }
           
           // Explore initialData structure
           if (pageProps.initialData) {
-            console.log('🔍 InitialData keys:', Object.keys(pageProps.initialData));
+            console.log('[INFO] InitialData keys:', Object.keys(pageProps.initialData));
             
             if (debugMode) {
               const initialDataPath = join(process.cwd(), `debug-initialdata-${eventType}.json`);
               writeFileSync(initialDataPath, JSON.stringify(pageProps.initialData, null, 2));
-              console.log(`🐛 Saved InitialData to ${initialDataPath}`);
+              console.log(`[DEBUG] Saved InitialData to ${initialDataPath}`);
             }
           }
           
@@ -96,7 +96,7 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
 
           for (const eventSource of possibleEventSources) {
             if (eventSource && Array.isArray(eventSource)) {
-              console.log(`✅ Found ${eventSource.length} events in data source`);
+              console.log(`[SUCCESS] Found ${eventSource.length} events in data source`);
               eventSource.forEach((item: any, index: number) => {
                 // Handle featured_items structure (has nested event object)
                 const event = item.event || item;
@@ -123,17 +123,17 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
           }
         }
       } catch (e) {
-        console.error('❌ Error parsing __NEXT_DATA__:', e);
+        console.error('[ERROR] Error parsing __NEXT_DATA__:', e);
       }
     });
 
     // Fallback: Look for other JSON script tags
     if (events.length === 0) {
-      console.log('🔄 Trying other JSON script tags...');
+      console.log('[INFO] Trying other JSON script tags...');
       $('script[type="application/json"]').each((_, element) => {
         try {
           const jsonData = JSON.parse($(element).html() || '{}');
-          console.log('📊 Found JSON script with keys:', Object.keys(jsonData));
+          console.log('[INFO] Found JSON script with keys:', Object.keys(jsonData));
         } catch (e) {
           // Skip invalid JSON
         }
@@ -142,11 +142,11 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
 
     // Fallback: Look for structured data
     if (events.length === 0) {
-      console.log('🔄 Trying structured data...');
+      console.log('[INFO] Trying structured data...');
       $('script[type="application/ld+json"]').each((_, element) => {
         try {
           const structuredData = JSON.parse($(element).html() || '{}');
-          console.log('📊 Found structured data:', structuredData['@type']);
+          console.log('[INFO] Found structured data:', structuredData['@type']);
           
           if (structuredData['@type'] === 'Event') {
             events.push({
@@ -163,11 +163,11 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
       });
     }
 
-    console.log(`✅ Successfully scraped ${events.length} ${eventType} events`);
+    console.log(`[SUCCESS] Successfully scraped ${events.length} ${eventType} events`);
     return events;
 
   } catch (error) {
-    console.error('❌ Scraping failed:', error);
+    console.error('[ERROR] Scraping failed:', error);
     return [];
   }
 }
@@ -175,17 +175,17 @@ async function scrapeLumaEvents(calendarSlug: string, eventType: 'upcoming' | 'p
 async function main() {
   const calendarSlug = process.argv[2] || 'agivc';
   const debugMode = process.argv.includes('--debug');
-  console.log(`🚀 Starting Luma scraper for: ${calendarSlug}`);
+  console.log(`[START] Starting Luma scraper for: ${calendarSlug}`);
   
   if (debugMode) {
-    console.log('🐛 Debug mode enabled - will save HTML and data structures');
+    console.log('[DEBUG] Debug mode enabled - will save HTML and data structures');
   }
   
   // Scrape both upcoming and past events
-  console.log('\n📅 Scraping upcoming events...');
+  console.log('\n[INFO] Scraping upcoming events...');
   const upcomingEvents = await scrapeLumaEvents(calendarSlug, 'upcoming', debugMode);
   
-  console.log('\n📚 Scraping past events...');
+  console.log('\n[INFO] Scraping past events...');
   const pastEvents = await scrapeLumaEvents(calendarSlug, 'past', debugMode);
   
   // Save to JSON file
@@ -203,17 +203,17 @@ async function main() {
   };
   
   writeFileSync(outputPath, JSON.stringify(output, null, 2));
-  console.log(`\n💾 Saved ${upcomingEvents.length} upcoming and ${pastEvents.length} past events to ${outputPath}`);
+  console.log(`\n[SAVED] Saved ${upcomingEvents.length} upcoming and ${pastEvents.length} past events to ${outputPath}`);
   
   if (upcomingEvents.length > 0) {
-    console.log('\n📋 Upcoming events found:');
+    console.log('\n[RESULTS] Upcoming events found:');
     upcomingEvents.forEach((event, index) => {
       console.log(`${index + 1}. ${event.name} (${event.start_at})`);
     });
   }
   
   if (pastEvents.length > 0) {
-    console.log('\n📚 Past events found:');
+    console.log('\n[RESULTS] Past events found:');
     pastEvents.slice(0, 5).forEach((event, index) => {
       console.log(`${index + 1}. ${event.name} (${event.start_at})`);
     });
@@ -223,7 +223,7 @@ async function main() {
   }
   
   if (upcomingEvents.length === 0 && pastEvents.length === 0) {
-    console.log('\n⚠️ No events found. The page structure might have changed.');
+    console.log('\n[WARNING] No events found. The page structure might have changed.');
   }
 }
 
