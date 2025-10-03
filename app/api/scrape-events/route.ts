@@ -90,28 +90,47 @@ export async function GET(request: NextRequest) {
     console.log('[START] Starting event scraper...');
     
     const calendarSlug = 'agivc';
+    const now = new Date();
     
     // Scrape both upcoming and past events
-    const [upcomingEvents, pastEvents] = await Promise.all([
+    const [scrapedUpcoming, scrapedPast] = await Promise.all([
       scrapeLumaEvents(calendarSlug, 'upcoming'),
       scrapeLumaEvents(calendarSlug, 'past')
     ]);
+
+    // Filter out events that aren't actually in the past/future
+    const upcomingEvents = scrapedUpcoming.filter(event => {
+      const eventDate = new Date(event.start_at);
+      return eventDate > now;
+    });
+    
+    const pastEvents = scrapedPast.filter(event => {
+      const eventDate = new Date(event.start_at);
+      return eventDate <= now;
+    });
+
+    // Note: In serverless environment, we can't read existing files
+    // You'd need to fetch from KV/database to merge with existing past events
+    // For now, we'll just limit to 20
+    const limitedPastEvents = pastEvents
+      .sort((a, b) => new Date(b.start_at).getTime() - new Date(a.start_at).getTime())
+      .slice(0, 20);
 
     const scrapedData = {
       scraped_at: new Date().toISOString(),
       calendar_slug: calendarSlug,
       upcoming_count: upcomingEvents.length,
-      past_count: pastEvents.length,
+      past_count: limitedPastEvents.length,
       upcoming_events: upcomingEvents,
-      past_events: pastEvents,
+      past_events: limitedPastEvents,
       events_count: upcomingEvents.length,
       events: upcomingEvents
     };
 
-    console.log(`[SUCCESS] Scraped ${upcomingEvents.length} upcoming and ${pastEvents.length} past events`);
+    console.log(`[SUCCESS] Scraped ${upcomingEvents.length} upcoming and ${limitedPastEvents.length} past events`);
 
     // In production, you would save this to:
-    // 1. Vercel KV (Redis)
+    // 1. Vercel KV (Redis) - RECOMMENDED
     // 2. Vercel Postgres
     // 3. External database
     // 4. Or commit to GitHub and trigger a rebuild
@@ -122,7 +141,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: scrapedData,
-      message: 'Events scraped successfully. Note: Data is not persisted in this demo.'
+      message: 'Events scraped successfully. Note: Data is not persisted in this demo. Implement Vercel KV for persistence.'
     });
     
   } catch (error) {

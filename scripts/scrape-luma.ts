@@ -4,7 +4,7 @@
 // Run with: npx tsx scripts/scrape-luma.ts
 
 import * as cheerio from 'cheerio';
-import { writeFileSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
 interface Event {
@@ -181,50 +181,91 @@ async function main() {
     console.log('[DEBUG] Debug mode enabled - will save HTML and data structures');
   }
   
+  const now = new Date();
+  
   // Scrape both upcoming and past events
   console.log('\n[INFO] Scraping upcoming events...');
-  const upcomingEvents = await scrapeLumaEvents(calendarSlug, 'upcoming', debugMode);
+  const scrapedUpcoming = await scrapeLumaEvents(calendarSlug, 'upcoming', debugMode);
   
   console.log('\n[INFO] Scraping past events...');
-  const pastEvents = await scrapeLumaEvents(calendarSlug, 'past', debugMode);
+  const scrapedPast = await scrapeLumaEvents(calendarSlug, 'past', debugMode);
+  
+  // Filter out events that aren't actually in the past/future
+  const upcomingEvents = scrapedUpcoming.filter(event => {
+    const eventDate = new Date(event.start_at);
+    return eventDate > now;
+  });
+  
+  const pastEvents = scrapedPast.filter(event => {
+    const eventDate = new Date(event.start_at);
+    return eventDate <= now;
+  });
+  
+  // Load existing data to avoid duplicates
+  const outputPath = join(process.cwd(), 'lib/scraped-events.json');
+  let existingPastEvents: Event[] = [];
+  
+  try {
+    if (existsSync(outputPath)) {
+      const existingData = JSON.parse(readFileSync(outputPath, 'utf-8'));
+      existingPastEvents = existingData.past_events || [];
+    }
+  } catch (e) {
+    console.log('[INFO] No existing data found, starting fresh');
+  }
+  
+  // Merge past events, avoiding duplicates
+  const existingIds = new Set(existingPastEvents.map(e => e.id));
+  const newPastEvents = pastEvents.filter(event => !existingIds.has(event.id));
+  
+  // Combine and sort past events (newest first)
+  const allPastEvents = [...newPastEvents, ...existingPastEvents]
+    .sort((a, b) => new Date(b.start_at).getTime() - new Date(a.start_at).getTime())
+    .slice(0, 20); // Limit to 20 most recent past events
+  
+  console.log(`[INFO] Found ${newPastEvents.length} new past events, ${existingPastEvents.length} existing`);
+  console.log(`[INFO] Total past events after merge: ${allPastEvents.length} (limited to 20)`);
   
   // Save to JSON file
-  const outputPath = join(process.cwd(), 'lib/scraped-events.json');
   const output = {
     scraped_at: new Date().toISOString(),
     calendar_slug: calendarSlug,
     upcoming_count: upcomingEvents.length,
-    past_count: pastEvents.length,
+    past_count: allPastEvents.length,
     upcoming_events: upcomingEvents,
-    past_events: pastEvents,
+    past_events: allPastEvents,
     // Backwards compatibility
     events_count: upcomingEvents.length,
     events: upcomingEvents
   };
   
   writeFileSync(outputPath, JSON.stringify(output, null, 2));
-  console.log(`\n[SAVED] Saved ${upcomingEvents.length} upcoming and ${pastEvents.length} past events to ${outputPath}`);
+  console.log(`\n[SAVED] Saved ${upcomingEvents.length} upcoming and ${allPastEvents.length} past events to ${outputPath}`);
   
   if (upcomingEvents.length > 0) {
     console.log('\n[RESULTS] Upcoming events found:');
     upcomingEvents.forEach((event, index) => {
-      console.log(`${index + 1}. ${event.name} (${event.start_at})`);
+      const eventDate = new Date(event.start_at);
+      console.log(`${index + 1}. ${event.name} (${eventDate.toLocaleString()})`);
     });
   }
   
-  if (pastEvents.length > 0) {
-    console.log('\n[RESULTS] Past events found:');
-    pastEvents.slice(0, 5).forEach((event, index) => {
-      console.log(`${index + 1}. ${event.name} (${event.start_at})`);
+  if (allPastEvents.length > 0) {
+    console.log('\n[RESULTS] Past events (showing first 5):');
+    allPastEvents.slice(0, 5).forEach((event, index) => {
+      const eventDate = new Date(event.start_at);
+      console.log(`${index + 1}. ${event.name} (${eventDate.toLocaleString()})`);
     });
-    if (pastEvents.length > 5) {
-      console.log(`... and ${pastEvents.length - 5} more`);
+    if (allPastEvents.length > 5) {
+      console.log(`... and ${allPastEvents.length - 5} more`);
     }
   }
   
-  if (upcomingEvents.length === 0 && pastEvents.length === 0) {
+  if (upcomingEvents.length === 0 && allPastEvents.length === 0) {
     console.log('\n[WARNING] No events found. The page structure might have changed.');
   }
+  
+  console.log(`\n[SUMMARY] Upcoming: ${upcomingEvents.length}, Past: ${allPastEvents.length}, New Past: ${newPastEvents.length}`);
 }
 
 main().catch(console.error);
